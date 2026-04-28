@@ -96,20 +96,19 @@ if subject_filter != "All":
 if page == "🏠 Overview":
     st.title("🍺 Alcohol Consumption Analytics System")
 
+    st.write("""
+    This is an advanced data science project that includes:
+    - Data Analysis
+    - Statistical Testing
+    - Machine Learning
+    - Visualization Dashboard
+    """)
 
-st.write("""
-This is an advanced data science project that includes:
-- Data Analysis
-- Statistical Testing
-- Machine Learning
-- Visualization Dashboard
-""")
+    st.subheader("Dataset Preview")
+    st.dataframe(df.head(20))
 
-st.subheader("Dataset Preview")
-st.dataframe(df.head(20))
-
-st.subheader("Dataset Shape")
-st.write(df.shape)
+    st.subheader("Dataset Shape")
+    st.write(df.shape)
 
 
 # ----------------------------------------------------------
@@ -122,26 +121,26 @@ elif page == "📊 Dashboard":
     st.title("📊 Dashboard")
 
 
-col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-col1.metric("Avg Alcohol", round(df["total_alcohol"].mean(), 2))
-col2.metric("Avg Grade", round(df["G3"].mean(), 2))
-col3.metric("Max Alcohol", df["total_alcohol"].max())
+    col1.metric("Avg Alcohol", round(df["total_alcohol"].mean(), 2))
+    col2.metric("Avg Grade", round(df["G3"].mean(), 2))
+    col3.metric("Max Alcohol", df["total_alcohol"].max())
 
-st.subheader("Alcohol Distribution")
-fig1, ax1 = plt.subplots()
-sns.histplot(df["total_alcohol"], kde=True, ax=ax1)
-st.pyplot(fig1)
+    st.subheader("Alcohol Distribution")
+    fig1, ax1 = plt.subplots()
+    sns.histplot(df["total_alcohol"], kde=True, ax=ax1)
+    st.pyplot(fig1)
 
-st.subheader("Subject Comparison")
-fig2, ax2 = plt.subplots()
-sns.boxplot(x="subject", y="total_alcohol", data=df, ax=ax2)
-st.pyplot(fig2)
+    st.subheader("Subject Comparison")
+    fig2, ax2 = plt.subplots()
+    sns.boxplot(x="subject", y="total_alcohol", data=df, ax=ax2)
+    st.pyplot(fig2)
 
-st.subheader("Alcohol vs Grades")
-fig3, ax3 = plt.subplots()
-sns.scatterplot(x="total_alcohol", y="G3", data=df, ax=ax3)
-st.pyplot(fig3)
+    st.subheader("Alcohol vs Grades")
+    fig3, ax3 = plt.subplots()
+    sns.scatterplot(x="total_alcohol", y="G3", data=df, ax=ax3)
+    st.pyplot(fig3)
 
 
 # ----------------------------------------------------------
@@ -154,25 +153,25 @@ elif page == "📈 Deep Analysis":
     st.title("📈 Deep Analysis")
 
 
-st.subheader("Correlation Heatmap")
-fig4, ax4 = plt.subplots(figsize=(10, 6))
-sns.heatmap(df.corr(), cmap="coolwarm", ax=ax4)
-st.pyplot(fig4)
+    st.subheader("Correlation Heatmap")
+    fig4, ax4 = plt.subplots(figsize=(10, 6))
+    sns.heatmap(df.corr(), cmap="coolwarm", ax=ax4)
+    st.pyplot(fig4)
 
-st.subheader("Study Time vs Alcohol")
-fig5, ax5 = plt.subplots()
-sns.boxplot(x="studytime", y="total_alcohol", data=df, ax=ax5)
-st.pyplot(fig5)
+    st.subheader("Study Time vs Alcohol")
+    fig5, ax5 = plt.subplots()
+    sns.boxplot(x="studytime", y="total_alcohol", data=df, ax=ax5)
+    st.pyplot(fig5)
 
-st.subheader("Failures vs Alcohol")
-fig6, ax6 = plt.subplots()
-sns.boxplot(x="failures", y="total_alcohol", data=df, ax=ax6)
-st.pyplot(fig6)
+    st.subheader("Failures vs Alcohol")
+    fig6, ax6 = plt.subplots()
+    sns.boxplot(x="failures", y="total_alcohol", data=df, ax=ax6)
+    st.pyplot(fig6)
 
-st.subheader("Age vs Alcohol")
-fig7, ax7 = plt.subplots()
-sns.scatterplot(x="age", y="total_alcohol", data=df, ax=ax7)
-st.pyplot(fig7)
+    st.subheader("Age vs Alcohol")
+    fig7, ax7 = plt.subplots()
+    sns.scatterplot(x="age", y="total_alcohol", data=df, ax=ax7)
+    st.pyplot(fig7)
 
 
 # ----------------------------------------------------------
@@ -185,14 +184,14 @@ elif page == "📉 Statistics":
     st.title("📉 Statistical Analysis")
 
 
-st.subheader("Descriptive Statistics")
-st.write(df[["total_alcohol", "G3"]].describe())
+    st.subheader("Descriptive Statistics")
+    st.write(df[["total_alcohol", "G3"]].describe())
 
-st.subheader("Correlation Test")
-corr, p = pearsonr(df["total_alcohol"], df["G3"])
+    st.subheader("Correlation Test")
+    corr, p = pearsonr(df["total_alcohol"], df["G3"])
 
-st.write("Correlation:", round(corr, 3))
-st.write("P-value:", p)
+    st.write("Correlation:", round(corr, 3))
+    st.write("P-value:", p)
 
 if p < 0.05:
     st.success("Significant relationship exists")
@@ -210,7 +209,7 @@ elif page == "📚 Feature Insights":
     st.title("📚 Feature Insights")
 
 
-st.subheader("Top Influencing Features")
+    st.subheader("Top Influencing Features")
 
 if model_loaded and hasattr(model, "feature_importances_"):
     importances = model.feature_importances_
@@ -237,9 +236,9 @@ elif page == "🔮 Prediction":
     st.title("🔮 Alcohol Prediction")
 
 
-age = st.slider("Age", 15, 22)
-studytime = st.slider("Study Time", 1, 4)
-failures = st.slider("Failures", 0, 3)
+    age = st.slider("Age", 15, 22)
+    studytime = st.slider("Study Time", 1, 4)
+    failures = st.slider("Failures", 0, 3)
 
 if st.button("Predict"):
     if model_loaded:
