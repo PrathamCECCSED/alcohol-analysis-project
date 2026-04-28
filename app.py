@@ -96,7 +96,7 @@ if subject_filter != "All":
 if page == "🏠 Overview":
     st.title("🍺 Alcohol Consumption Analytics System")
 
-```
+
 st.write("""
 This is an advanced data science project that includes:
 - Data Analysis
@@ -110,7 +110,7 @@ st.dataframe(df.head(20))
 
 st.subheader("Dataset Shape")
 st.write(df.shape)
-```
+
 
 # ----------------------------------------------------------
 
@@ -121,7 +121,7 @@ st.write(df.shape)
 elif page == "📊 Dashboard":
     st.title("📊 Dashboard")
 
-```
+
 col1, col2, col3 = st.columns(3)
 
 col1.metric("Avg Alcohol", round(df["total_alcohol"].mean(), 2))
@@ -142,7 +142,7 @@ st.subheader("Alcohol vs Grades")
 fig3, ax3 = plt.subplots()
 sns.scatterplot(x="total_alcohol", y="G3", data=df, ax=ax3)
 st.pyplot(fig3)
-```
+
 
 # ----------------------------------------------------------
 
@@ -153,7 +153,7 @@ st.pyplot(fig3)
 elif page == "📈 Deep Analysis":
     st.title("📈 Deep Analysis")
 
-```
+
 st.subheader("Correlation Heatmap")
 fig4, ax4 = plt.subplots(figsize=(10, 6))
 sns.heatmap(df.corr(), cmap="coolwarm", ax=ax4)
@@ -173,7 +173,7 @@ st.subheader("Age vs Alcohol")
 fig7, ax7 = plt.subplots()
 sns.scatterplot(x="age", y="total_alcohol", data=df, ax=ax7)
 st.pyplot(fig7)
-```
+
 
 # ----------------------------------------------------------
 
@@ -184,7 +184,7 @@ st.pyplot(fig7)
 elif page == "📉 Statistics":
     st.title("📉 Statistical Analysis")
 
-```
+
 st.subheader("Descriptive Statistics")
 st.write(df[["total_alcohol", "G3"]].describe())
 
@@ -198,7 +198,7 @@ if p < 0.05:
     st.success("Significant relationship exists")
 else:
     st.warning("No significant relationship")
-```
+
 
 # ----------------------------------------------------------
 
@@ -209,7 +209,7 @@ else:
 elif page == "📚 Feature Insights":
     st.title("📚 Feature Insights")
 
-```
+
 st.subheader("Top Influencing Features")
 
 if model_loaded and hasattr(model, "feature_importances_"):
@@ -225,7 +225,7 @@ if model_loaded and hasattr(model, "feature_importances_"):
     st.pyplot(fig8)
 else:
     st.info("Feature importance not available")
-```
+
 
 # ----------------------------------------------------------
 
@@ -236,7 +236,7 @@ else:
 elif page == "🔮 Prediction":
     st.title("🔮 Alcohol Prediction")
 
-```
+
 age = st.slider("Age", 15, 22)
 studytime = st.slider("Study Time", 1, 4)
 failures = st.slider("Failures", 0, 3)
@@ -251,7 +251,7 @@ if st.button("Predict"):
             st.warning("Model trained on more features")
     else:
         st.error("Model not loaded")
-```
+
 
 # ----------------------------------------------------------
 
@@ -262,7 +262,7 @@ if st.button("Predict"):
 elif page == "📥 Download":
     st.title("📥 Download Data")
 
-```
+
 csv = df.to_csv(index=False).encode("utf-8")
 
 st.download_button(
@@ -271,4 +271,4 @@ st.download_button(
     "alcohol_data.csv",
     "text/csv"
 )
-```
+
