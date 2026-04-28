@@ -49,10 +49,10 @@ df["grade_avg"] = (df["G1"] + df["G2"] + df["G3"]) / 3
 
 model_loaded = False
 try:
-model = pickle.load(open("model.pkl", "rb"))
-model_loaded = True
+    model = pickle.load(open("model.pkl", "rb"))
+    model_loaded = True
 except:
-model_loaded = False
+    model_loaded = False
 
 # ----------------------------------------------------------
 
