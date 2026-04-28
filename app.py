@@ -1,6 +1,6 @@
 # ================================
 
-# ADVANCED ALCOHOL ANALYSIS APP
+# ALCOHOL ANALYTICS PRO 
 
 # ================================
 
@@ -16,7 +16,7 @@ st.set_page_config(page_title="Alcohol Analytics Pro", layout="wide")
 
 # ================================
 
-# LOAD DATA & MODEL
+# LOAD DATA FUNCTION (FIXED)
 
 # ================================
 
@@ -39,7 +39,11 @@ return df
 
 df = load_data()
 
-# Load model safely
+# ================================
+
+# LOAD MODEL
+
+# ================================
 
 try:
 model = pickle.load(open("model.pkl", "rb"))
@@ -49,7 +53,7 @@ model_loaded = False
 
 # ================================
 
-# SIDEBAR CONTROLS
+# SIDEBAR
 
 # ================================
 
@@ -70,7 +74,7 @@ df = df[df['subject'] == selected_subject]
 
 # ================================
 
-# OVERVIEW PAGE
+# OVERVIEW
 
 # ================================
 
@@ -79,9 +83,9 @@ st.title("🍺 Alcohol Consumption Analytics")
 
 ```
 st.write("""
-This project analyzes student alcohol consumption behavior using:
+This project analyzes alcohol consumption using:
 - Data Analytics
-- Statistical Analysis
+- Statistical Methods
 - Machine Learning
 - Interactive Dashboard
 """)
@@ -101,8 +105,8 @@ st.title("📊 Dashboard")
 
 ```
 col1, col2, col3 = st.columns(3)
-col1.metric("Avg Alcohol", round(df['total_alcohol'].mean(),2))
-col2.metric("Avg Grade", round(df['G3'].mean(),2))
+col1.metric("Avg Alcohol", round(df['total_alcohol'].mean(), 2))
+col2.metric("Avg Grade", round(df['G3'].mean(), 2))
 col3.metric("Max Alcohol", df['total_alcohol'].max())
 
 st.subheader("Distribution")
@@ -132,7 +136,7 @@ st.title("📈 Deep Analysis")
 
 ```
 st.subheader("Correlation Heatmap")
-fig4, ax4 = plt.subplots(figsize=(10,6))
+fig4, ax4 = plt.subplots(figsize=(10, 6))
 sns.heatmap(df.corr(), cmap='coolwarm', ax=ax4)
 st.pyplot(fig4)
 
@@ -154,7 +158,7 @@ st.pyplot(fig7)
 
 # ================================
 
-# STATISTICS PAGE
+# STATISTICS
 
 # ================================
 
@@ -163,10 +167,11 @@ st.title("📉 Statistical Analysis")
 
 ```
 st.subheader("Basic Statistics")
-st.write(df[['total_alcohol','G3']].describe())
+st.write(df[['total_alcohol', 'G3']].describe())
 
 st.subheader("Correlation Test")
 corr, p = pearsonr(df['total_alcohol'], df['G3'])
+
 st.write(f"Correlation: {corr:.3f}")
 st.write(f"P-value: {p:.5f}")
 
@@ -178,7 +183,7 @@ else:
 
 # ================================
 
-# PREDICTION PAGE
+# PREDICTION
 
 # ================================
 
@@ -197,14 +202,15 @@ if st.button("Predict"):
             pred = model.predict(input_data)
             st.success(f"Predicted Alcohol Level: {pred[0]:.2f}")
         except:
-            st.warning("Model expects more features (demo mode).")
+            st.warning("Model expects more features (demo mode)")
     else:
         st.error("Model not loaded")
 
 st.subheader("Feature Importance")
+
 if model_loaded and hasattr(model, "feature_importances_"):
     importances = model.feature_importances_
-    features = df.drop(['Dalc','Walc','total_alcohol'], axis=1).columns
+    features = df.drop(['Dalc', 'Walc', 'total_alcohol'], axis=1).columns
 
     imp_df = pd.Series(importances, index=features).sort_values(ascending=False)[:10]
 
@@ -213,21 +219,22 @@ if model_loaded and hasattr(model, "feature_importances_"):
     ax8.invert_yaxis()
     st.pyplot(fig8)
 else:
-    st.info("Feature importance unavailable")
+    st.info("Feature importance not available")
 ```
 
 # ================================
 
-# DOWNLOAD SECTION
+# DOWNLOAD DATA
 
 # ================================
 
 st.sidebar.subheader("Download Data")
 
 csv = df.to_csv(index=False).encode('utf-8')
+
 st.sidebar.download_button(
 label="Download Dataset",
 data=csv,
-file_name='alcohol_data.csv',
-mime='text/csv',
+file_name="alcohol_data.csv",
+mime="text/csv"
 )
