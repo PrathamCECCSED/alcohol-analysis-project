@@ -42,34 +42,28 @@ st.title("🍺 Alcohol Consumption Analysis & Prediction")
 tab1, tab2 = st.tabs(["📊 Dashboard", "🔮 Prediction"])
 
 # ---------------- DASHBOARD ----------------
-
 with tab1:
-st.subheader("Alcohol Distribution")
+    st.subheader("Alcohol Distribution")
 
-```
-fig1, ax1 = plt.subplots()
-sns.histplot(df['total_alcohol'], kde=True, ax=ax1)
-st.pyplot(fig1)
+    fig1, ax1 = plt.subplots()
+    sns.histplot(df['total_alcohol'], kde=True, ax=ax1)
+    st.pyplot(fig1)
 
-st.subheader("Subject Comparison")
+    st.subheader("Subject Comparison")
 
-fig2, ax2 = plt.subplots()
-sns.boxplot(x='subject', y='total_alcohol', data=df, ax=ax2)
-st.pyplot(fig2)
-```
+    fig2, ax2 = plt.subplots()
+    sns.boxplot(x='subject', y='total_alcohol', data=df, ax=ax2)
+    st.pyplot(fig2)
 
 # ---------------- PREDICTION ----------------
-
 with tab2:
-st.subheader("Predict Alcohol Consumption")
+    st.subheader("Predict Alcohol Consumption")
 
-```
-if st.button("Predict"):
-    try:
-        input_data = np.array([[age, studytime, failures]])
-        prediction = model.predict(input_data)
+    if st.button("Predict"):
+        try:
+            input_data = np.array([[age, studytime, failures]])
+            prediction = model.predict(input_data)
 
-        st.success(f"Predicted Level: {prediction[0]:.2f}")
-    except:
-        st.warning("Model uses many features — demo prediction shown.")
-```
+            st.success(f"Predicted Level: {prediction[0]:.2f}")
+        except:
+            st.warning("Model uses many features — demo prediction shown.")
