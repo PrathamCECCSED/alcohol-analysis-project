@@ -66,7 +66,6 @@ st.subheader("Predict Alcohol Consumption")
 ```
 if st.button("Predict"):
     try:
-        # Temporary simple input (demo purpose)
         input_data = np.array([[age, studytime, failures]])
         prediction = model.predict(input_data)
 
