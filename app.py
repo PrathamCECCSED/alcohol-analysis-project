@@ -1,9 +1,5 @@
 # ==========================================================
-
 # ALCOHOL CONSUMPTION ANALYSIS SYSTEM (FINAL YEAR PROJECT)
-
-# Advanced EDA + Statistics + ML + Dashboard + Export
-
 # ==========================================================
 
 import streamlit as st
@@ -15,19 +11,13 @@ import pickle
 from scipy.stats import pearsonr
 
 # ----------------------------------------------------------
-
 # CONFIG
-
 # ----------------------------------------------------------
-
 st.set_page_config(page_title="Alcohol Analytics Pro", layout="wide")
 
 # ----------------------------------------------------------
-
-# LOAD DATA (SAFE - NO FUNCTION ERRORS)
-
+# LOAD DATA
 # ----------------------------------------------------------
-
 df_mat = pd.read_csv("student-mat.csv")
 df_por = pd.read_csv("student-por.csv")
 
@@ -36,17 +26,12 @@ df_por["subject"] = "portuguese"
 
 df = pd.concat([df_mat, df_por], ignore_index=True)
 
-# Feature Engineering
-
 df["total_alcohol"] = df["Dalc"] + df["Walc"]
 df["grade_avg"] = (df["G1"] + df["G2"] + df["G3"]) / 3
 
 # ----------------------------------------------------------
-
-# LOAD MODEL (SAFE TRY BLOCK)
-
+# LOAD MODEL
 # ----------------------------------------------------------
-
 model_loaded = False
 try:
     model = pickle.load(open("model.pkl", "rb"))
@@ -55,32 +40,26 @@ except:
     model_loaded = False
 
 # ----------------------------------------------------------
-
-# SIDEBAR NAVIGATION
-
+# SIDEBAR
 # ----------------------------------------------------------
-
 st.sidebar.title("⚙️ Navigation Panel")
 
 page = st.sidebar.radio(
-"Go to",
-[
-"🏠 Overview",
-"📊 Dashboard",
-"📈 Deep Analysis",
-"📉 Statistics",
-"📚 Feature Insights",
-"🔮 Prediction",
-"📥 Download"
-]
+    "Go to",
+    [
+        "🏠 Overview",
+        "📊 Dashboard",
+        "📈 Deep Analysis",
+        "📉 Statistics",
+        "📚 Feature Insights",
+        "🔮 Prediction",
+        "📥 Download"
+    ]
 )
 
 # ----------------------------------------------------------
-
 # FILTER
-
 # ----------------------------------------------------------
-
 st.sidebar.subheader("Filter Data")
 subject_filter = st.sidebar.selectbox("Subject", ["All", "math", "portuguese"])
 
@@ -88,11 +67,8 @@ if subject_filter != "All":
     df = df[df["subject"] == subject_filter]
 
 # ----------------------------------------------------------
-
-# OVERVIEW PAGE
-
+# OVERVIEW
 # ----------------------------------------------------------
-
 if page == "🏠 Overview":
     st.title("🍺 Alcohol Consumption Analytics System")
 
@@ -110,16 +86,11 @@ if page == "🏠 Overview":
     st.subheader("Dataset Shape")
     st.write(df.shape)
 
-
 # ----------------------------------------------------------
-
-# DASHBOARD PAGE
-
+# DASHBOARD
 # ----------------------------------------------------------
-
 elif page == "📊 Dashboard":
     st.title("📊 Dashboard")
-
 
     col1, col2, col3 = st.columns(3)
 
@@ -142,16 +113,11 @@ elif page == "📊 Dashboard":
     sns.scatterplot(x="total_alcohol", y="G3", data=df, ax=ax3)
     st.pyplot(fig3)
 
-
 # ----------------------------------------------------------
-
 # DEEP ANALYSIS
-
 # ----------------------------------------------------------
-
 elif page == "📈 Deep Analysis":
     st.title("📈 Deep Analysis")
-
 
     st.subheader("Correlation Heatmap")
     fig4, ax4 = plt.subplots(figsize=(10, 6))
@@ -173,16 +139,11 @@ elif page == "📈 Deep Analysis":
     sns.scatterplot(x="age", y="total_alcohol", data=df, ax=ax7)
     st.pyplot(fig7)
 
-
 # ----------------------------------------------------------
-
 # STATISTICS
-
 # ----------------------------------------------------------
-
 elif page == "📉 Statistics":
     st.title("📉 Statistical Analysis")
-
 
     st.subheader("Descriptive Statistics")
     st.write(df[["total_alcohol", "G3"]].describe())
@@ -193,81 +154,65 @@ elif page == "📉 Statistics":
     st.write("Correlation:", round(corr, 3))
     st.write("P-value:", p)
 
-if p < 0.05:
-    st.success("Significant relationship exists")
-else:
-    st.warning("No significant relationship")
-
+    if p < 0.05:
+        st.success("Significant relationship exists")
+    else:
+        st.warning("No significant relationship")
 
 # ----------------------------------------------------------
-
 # FEATURE INSIGHTS
-
 # ----------------------------------------------------------
-
 elif page == "📚 Feature Insights":
     st.title("📚 Feature Insights")
 
-
     st.subheader("Top Influencing Features")
 
-if model_loaded and hasattr(model, "feature_importances_"):
-    importances = model.feature_importances_
-    features = df.drop(["Dalc", "Walc", "total_alcohol"], axis=1).columns
+    if model_loaded and hasattr(model, "feature_importances_"):
+        importances = model.feature_importances_
+        features = df.drop(["Dalc", "Walc", "total_alcohol"], axis=1).columns
 
-    imp_df = pd.Series(importances, index=features)
-    imp_df = imp_df.sort_values(ascending=False).head(10)
+        imp_df = pd.Series(importances, index=features)
+        imp_df = imp_df.sort_values(ascending=False).head(10)
 
-    fig8, ax8 = plt.subplots()
-    imp_df.plot(kind="barh", ax=ax8)
-    ax8.invert_yaxis()
-    st.pyplot(fig8)
-else:
-    st.info("Feature importance not available")
-
+        fig8, ax8 = plt.subplots()
+        imp_df.plot(kind="barh", ax=ax8)
+        ax8.invert_yaxis()
+        st.pyplot(fig8)
+    else:
+        st.info("Feature importance not available")
 
 # ----------------------------------------------------------
-
 # PREDICTION
-
 # ----------------------------------------------------------
-
 elif page == "🔮 Prediction":
     st.title("🔮 Alcohol Prediction")
-
 
     age = st.slider("Age", 15, 22)
     studytime = st.slider("Study Time", 1, 4)
     failures = st.slider("Failures", 0, 3)
 
-if st.button("Predict"):
-    if model_loaded:
-        try:
-            input_data = np.array([[age, studytime, failures]])
-            pred = model.predict(input_data)
-            st.success(f"Predicted Alcohol Level: {pred[0]:.2f}")
-        except:
-            st.warning("Model trained on more features")
-    else:
-        st.error("Model not loaded")
-
+    if st.button("Predict"):
+        if model_loaded:
+            try:
+                input_data = np.array([[age, studytime, failures]])
+                pred = model.predict(input_data)
+                st.success(f"Predicted Alcohol Level: {pred[0]:.2f}")
+            except:
+                st.warning("Model trained on more features")
+        else:
+            st.error("Model not loaded")
 
 # ----------------------------------------------------------
-
 # DOWNLOAD
-
 # ----------------------------------------------------------
-
 elif page == "📥 Download":
     st.title("📥 Download Data")
 
+    csv = df.to_csv(index=False).encode("utf-8")
 
-csv = df.to_csv(index=False).encode("utf-8")
-
-st.download_button(
-    "Download Dataset",
-    csv,
-    "alcohol_data.csv",
-    "text/csv"
-)
-
+    st.download_button(
+        "Download Dataset",
+        csv,
+        "alcohol_data.csv",
+        "text/csv"
+    )
