@@ -85,7 +85,7 @@ st.sidebar.subheader("Filter Data")
 subject_filter = st.sidebar.selectbox("Subject", ["All", "math", "portuguese"])
 
 if subject_filter != "All":
-df = df[df["subject"] == subject_filter]
+    df = df[df["subject"] == subject_filter]
 
 # ----------------------------------------------------------
 
@@ -94,7 +94,7 @@ df = df[df["subject"] == subject_filter]
 # ----------------------------------------------------------
 
 if page == "🏠 Overview":
-st.title("🍺 Alcohol Consumption Analytics System")
+    st.title("🍺 Alcohol Consumption Analytics System")
 
 ```
 st.write("""
@@ -119,7 +119,7 @@ st.write(df.shape)
 # ----------------------------------------------------------
 
 elif page == "📊 Dashboard":
-st.title("📊 Dashboard")
+    st.title("📊 Dashboard")
 
 ```
 col1, col2, col3 = st.columns(3)
@@ -151,7 +151,7 @@ st.pyplot(fig3)
 # ----------------------------------------------------------
 
 elif page == "📈 Deep Analysis":
-st.title("📈 Deep Analysis")
+    st.title("📈 Deep Analysis")
 
 ```
 st.subheader("Correlation Heatmap")
@@ -182,7 +182,7 @@ st.pyplot(fig7)
 # ----------------------------------------------------------
 
 elif page == "📉 Statistics":
-st.title("📉 Statistical Analysis")
+    st.title("📉 Statistical Analysis")
 
 ```
 st.subheader("Descriptive Statistics")
@@ -207,7 +207,7 @@ else:
 # ----------------------------------------------------------
 
 elif page == "📚 Feature Insights":
-st.title("📚 Feature Insights")
+    st.title("📚 Feature Insights")
 
 ```
 st.subheader("Top Influencing Features")
@@ -234,7 +234,7 @@ else:
 # ----------------------------------------------------------
 
 elif page == "🔮 Prediction":
-st.title("🔮 Alcohol Prediction")
+    st.title("🔮 Alcohol Prediction")
 
 ```
 age = st.slider("Age", 15, 22)
@@ -260,7 +260,7 @@ if st.button("Predict"):
 # ----------------------------------------------------------
 
 elif page == "📥 Download":
-st.title("📥 Download Data")
+    st.title("📥 Download Data")
 
 ```
 csv = df.to_csv(index=False).encode("utf-8")
