@@ -117,26 +117,67 @@ elif page == "📊 Dashboard":
 # DEEP ANALYSIS
 # ----------------------------------------------------------
 elif page == "📈 Deep Analysis":
+
     st.title("📈 Deep Analysis")
 
+    # Select only numeric columns
+    numeric_df = df.select_dtypes(include=['number'])
+
+    # Correlation Heatmap
     st.subheader("Correlation Heatmap")
+
     fig4, ax4 = plt.subplots(figsize=(10, 6))
-    sns.heatmap(df.corr(), cmap="coolwarm", ax=ax4)
+
+    sns.heatmap(
+        numeric_df.corr(),
+        cmap="coolwarm",
+        annot=True,
+        fmt=".2f",
+        ax=ax4
+    )
+
     st.pyplot(fig4)
 
+    # Study Time vs Alcohol
     st.subheader("Study Time vs Alcohol")
-    fig5, ax5 = plt.subplots()
-    sns.boxplot(x="studytime", y="total_alcohol", data=df, ax=ax5)
+
+    fig5, ax5 = plt.subplots(figsize=(8, 5))
+
+    sns.boxplot(
+        x="studytime",
+        y="total_alcohol",
+        data=df,
+        ax=ax5
+    )
+
     st.pyplot(fig5)
 
+    # Failures vs Alcohol
     st.subheader("Failures vs Alcohol")
-    fig6, ax6 = plt.subplots()
-    sns.boxplot(x="failures", y="total_alcohol", data=df, ax=ax6)
+
+    fig6, ax6 = plt.subplots(figsize=(8, 5))
+
+    sns.boxplot(
+        x="failures",
+        y="total_alcohol",
+        data=df,
+        ax=ax6
+    )
+
     st.pyplot(fig6)
 
+    # Age vs Alcohol
     st.subheader("Age vs Alcohol")
-    fig7, ax7 = plt.subplots()
-    sns.scatterplot(x="age", y="total_alcohol", data=df, ax=ax7)
+
+    fig7, ax7 = plt.subplots(figsize=(8, 5))
+
+    sns.scatterplot(
+        x="age",
+        y="total_alcohol",
+        data=df,
+        ax=ax7
+    )
+
     st.pyplot(fig7)
 
 # ----------------------------------------------------------
