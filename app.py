@@ -204,21 +204,54 @@ elif page == "📉 Statistics":
 # FEATURE INSIGHTS
 # ----------------------------------------------------------
 elif page == "📚 Feature Insights":
+
     st.title("📚 Feature Insights")
 
     st.subheader("Top Influencing Features")
 
     if model_loaded and hasattr(model, "feature_importances_"):
-        importances = model.feature_importances_
-        features = df.drop(["Dalc", "Walc", "total_alcohol"], axis=1).columns
 
-        imp_df = pd.Series(importances, index=features)
-        imp_df = imp_df.sort_values(ascending=False).head(10)
+        try:
+            # Get feature importances
+            importances = model.feature_importances_
 
-        fig8, ax8 = plt.subplots()
-        imp_df.plot(kind="barh", ax=ax8)
-        ax8.invert_yaxis()
-        st.pyplot(fig8)
+            # Select only numeric columns
+            numeric_df = df.select_dtypes(include=['number'])
+
+            # Remove target columns safely
+            features = numeric_df.drop(
+                columns=["Dalc", "Walc", "total_alcohol"],
+                errors="ignore"
+            ).columns
+
+            # Match lengths to avoid ValueError
+            min_len = min(len(importances), len(features))
+
+            imp_df = pd.Series(
+                importances[:min_len],
+                index=features[:min_len]
+            )
+
+            # Sort top 10
+            imp_df = imp_df.sort_values(
+                ascending=False
+            ).head(10)
+
+            # Plot
+            fig8, ax8 = plt.subplots(figsize=(10, 6))
+
+            imp_df.plot(
+                kind="barh",
+                ax=ax8
+            )
+
+            ax8.invert_yaxis()
+
+            st.pyplot(fig8)
+
+        except Exception as e:
+            st.error(f"Error generating feature importance: {e}")
+
     else:
         st.info("Feature importance not available")
 
