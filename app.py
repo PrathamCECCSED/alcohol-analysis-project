@@ -325,14 +325,14 @@ elif page == "🤖 AI Prediction":
             2
         )
 
-    with col2:
-
         failures = st.slider(
             "Failures",
             0,
             4,
             0
         )
+
+    with col2:
 
         absences = st.slider(
             "Absences",
@@ -341,15 +341,37 @@ elif page == "🤖 AI Prediction":
             5
         )
 
+        goout = st.slider(
+            "Going Out Frequency",
+            1,
+            5,
+            3
+        )
+
+        freetime = st.slider(
+            "Free Time",
+            1,
+            5,
+            3
+        )
+
     if st.button("Predict Alcohol Consumption"):
 
         if model_loaded:
 
             try:
 
-                input_data = np.array([
-                    [age, studytime, failures]
-                ])
+                # CREATE 34 FEATURES INPUT
+
+                input_data = np.zeros((1, 34))
+
+                # Put important values in first positions
+                input_data[0][0] = age
+                input_data[0][1] = studytime
+                input_data[0][2] = failures
+                input_data[0][3] = absences
+                input_data[0][4] = goout
+                input_data[0][5] = freetime
 
                 prediction = model.predict(input_data)
 
@@ -385,6 +407,27 @@ elif page == "🤖 AI Prediction":
                     High alcohol consumption detected.
                     Academic performance may be affected.
                     """)
+
+                # AI INSIGHTS
+
+                st.markdown("---")
+
+                st.subheader("🧠 AI Insights")
+
+                if failures >= 3:
+                    st.warning(
+                        "High failure count may correlate with poor academic habits."
+                    )
+
+                if goout >= 4:
+                    st.info(
+                        "Frequent social outings may increase alcohol exposure."
+                    )
+
+                if studytime <= 1:
+                    st.error(
+                        "Low study time detected."
+                    )
 
             except Exception as e:
 
