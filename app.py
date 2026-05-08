@@ -1,6 +1,6 @@
 # ==========================================================
-# AI-POWERED STUDENT ALCOHOL ANALYTICS SYSTEM
-# FINAL YEAR MAJOR PROJECT (PREMIUM UI VERSION)
+# AI POWERED STUDENT ALCOHOL ANALYTICS SYSTEM
+# FINAL YEAR MAJOR PROJECT
 # ==========================================================
 
 import streamlit as st
@@ -9,6 +9,7 @@ import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import pickle
+import time
 from scipy.stats import pearsonr
 
 # ==========================================================
@@ -22,48 +23,57 @@ st.set_page_config(
 )
 
 # ==========================================================
-# CUSTOM CSS (PREMIUM UI)
+# PREMIUM CSS
 # ==========================================================
 
 st.markdown("""
 <style>
 
 .main {
-    background-color: #0E1117;
+    background-color: #0B1120;
     color: white;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
     color: white !important;
 }
 
 .stMetric {
-    background: linear-gradient(135deg,#1f2937,#111827);
+    background: linear-gradient(135deg,#111827,#1E293B);
     padding: 20px;
     border-radius: 15px;
-    border: 1px solid #374151;
+    border: 1px solid #334155;
+    text-align: center;
 }
 
 div.stButton > button {
     width: 100%;
-    background: linear-gradient(90deg,#2563eb,#7c3aed);
+    background: linear-gradient(90deg,#2563EB,#7C3AED);
     color: white;
-    border-radius: 10px;
-    height: 3em;
+    border-radius: 12px;
+    height: 3.2em;
     font-size: 18px;
     border: none;
+    font-weight: bold;
 }
 
 div.stButton > button:hover {
-    background: linear-gradient(90deg,#1d4ed8,#6d28d9);
+    background: linear-gradient(90deg,#1D4ED8,#6D28D9);
 }
 
-.css-1d391kg {
+section[data-testid="stSidebar"] {
     background-color: #111827;
 }
 
 </style>
 """, unsafe_allow_html=True)
+
+# ==========================================================
+# LOADING ANIMATION
+# ==========================================================
+
+with st.spinner("Loading AI Analytics System..."):
+    time.sleep(2)
 
 # ==========================================================
 # LOAD DATA
@@ -77,7 +87,10 @@ df_por["subject"] = "Portuguese"
 
 df = pd.concat([df_mat, df_por], ignore_index=True)
 
-# Feature Engineering
+# ==========================================================
+# FEATURE ENGINEERING
+# ==========================================================
+
 df["total_alcohol"] = df["Dalc"] + df["Walc"]
 df["grade_avg"] = (df["G1"] + df["G2"] + df["G3"]) / 3
 
@@ -97,18 +110,23 @@ except:
 # SIDEBAR
 # ==========================================================
 
-st.sidebar.title("🎓 Navigation Panel")
+st.sidebar.image(
+    "https://cdn-icons-png.flaticon.com/512/1046/1046784.png",
+    width=100
+)
+
+st.sidebar.title("🎓 Navigation")
 
 page = st.sidebar.radio(
     "Select Page",
     [
         "🏠 Home",
-        "📊 Analytics Dashboard",
+        "📊 Dashboard",
         "📈 Deep Analysis",
         "🤖 AI Prediction",
-        "📉 Statistical Report",
+        "📉 Statistics",
         "📚 Feature Insights",
-        "📥 Download Dataset"
+        "📥 Download"
     ]
 )
 
@@ -128,31 +146,27 @@ if subject_filter != "All":
 
 if page == "🏠 Home":
 
-    st.title("🍺 AI-Powered Student Alcohol Analytics System")
-
     st.markdown("""
-    ### 🎯 Final Year Major Project
-    
-    This intelligent analytics system analyzes the relationship between:
-    
-    - Student alcohol consumption
-    - Academic performance
-    - Study behavior
-    - Failure trends
-    - Lifestyle patterns
-    
-    using:
-    
-    ✅ Machine Learning  
-    ✅ Statistical Analysis  
-    ✅ Data Visualization  
-    ✅ Predictive Analytics  
-    ✅ AI-Based Insights
-    """)
+    <div style='padding:30px;border-radius:20px;
+    background: linear-gradient(135deg,#111827,#1E3A8A);
+    text-align:center;'>
+
+    <h1 style='color:white;font-size:50px;'>
+    🍺 AI-Powered Student Alcohol Analytics System
+    </h1>
+
+    <h3 style='color:#CBD5E1;'>
+    Final Year Major Project Using Machine Learning
+    </h3>
+
+    <p style='color:#94A3B8;font-size:18px;'>
+    Analyzing student behavior and academic performance using AI.
+    </p>
+
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
-
-    # METRICS
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -180,6 +194,39 @@ if page == "🏠 Home":
 
     st.markdown("---")
 
+    st.subheader("🎯 Research Objective")
+
+    st.write("""
+    This project analyzes the relationship between alcohol
+    consumption and academic performance using machine learning,
+    statistical analysis, and intelligent dashboards.
+    """)
+
+    st.markdown("---")
+
+    st.subheader("⚙️ System Workflow")
+
+    st.markdown("""
+    1. Data Collection  
+    2. Data Preprocessing  
+    3. Feature Engineering  
+    4. Statistical Analysis  
+    5. Machine Learning Training  
+    6. Prediction Generation  
+    7. Visualization Dashboard  
+    8. AI Insight Generation  
+    """)
+
+    st.markdown("---")
+
+    st.subheader("📂 Dataset Information")
+
+    st.write(f"Rows: {df.shape[0]}")
+    st.write(f"Columns: {df.shape[1]}")
+    st.write(f"Missing Values: {df.isnull().sum().sum()}")
+
+    st.markdown("---")
+
     st.subheader("📋 Dataset Preview")
 
     st.dataframe(df.head(20), use_container_width=True)
@@ -188,13 +235,9 @@ if page == "🏠 Home":
 # DASHBOARD
 # ==========================================================
 
-elif page == "📊 Analytics Dashboard":
+elif page == "📊 Dashboard":
 
     st.title("📊 Analytics Dashboard")
-
-    # CHART 1
-
-    st.subheader("Alcohol Consumption Distribution")
 
     fig1 = px.histogram(
         df,
@@ -204,10 +247,6 @@ elif page == "📊 Analytics Dashboard":
     )
 
     st.plotly_chart(fig1, use_container_width=True)
-
-    # CHART 2
-
-    st.subheader("Alcohol vs Final Grade")
 
     fig2 = px.scatter(
         df,
@@ -220,13 +259,9 @@ elif page == "📊 Analytics Dashboard":
 
     st.plotly_chart(fig2, use_container_width=True)
 
-    # CHART 3
-
     col1, col2 = st.columns(2)
 
     with col1:
-
-        st.subheader("Subject Wise Alcohol Usage")
 
         fig3 = px.box(
             df,
@@ -239,14 +274,28 @@ elif page == "📊 Analytics Dashboard":
 
     with col2:
 
-        st.subheader("Failures Distribution")
-
         fig4 = px.pie(
             df,
             names="failures"
         )
 
         st.plotly_chart(fig4, use_container_width=True)
+
+    st.markdown("---")
+
+    st.subheader("📌 Key Insights")
+
+    st.success(
+        "Students with lower study time show higher alcohol trends."
+    )
+
+    st.warning(
+        "High social activity may increase alcohol consumption."
+    )
+
+    st.info(
+        "Academic failures correlate with behavioral patterns."
+    )
 
 # ==========================================================
 # DEEP ANALYSIS
@@ -258,8 +307,6 @@ elif page == "📈 Deep Analysis":
 
     numeric_df = df.select_dtypes(include=np.number)
 
-    st.subheader("Correlation Heatmap")
-
     corr = numeric_df.corr()
 
     fig = px.imshow(
@@ -270,13 +317,9 @@ elif page == "📈 Deep Analysis":
 
     st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown("---")
-
     col1, col2 = st.columns(2)
 
     with col1:
-
-        st.subheader("Study Time vs Alcohol")
 
         fig5 = px.box(
             df,
@@ -288,8 +331,6 @@ elif page == "📈 Deep Analysis":
         st.plotly_chart(fig5, use_container_width=True)
 
     with col2:
-
-        st.subheader("Age vs Alcohol")
 
         fig6 = px.scatter(
             df,
@@ -308,9 +349,9 @@ elif page == "🤖 AI Prediction":
 
     st.title("🤖 AI Alcohol Consumption Prediction")
 
-    st.markdown("""
-    Enter student details to predict alcohol consumption level.
-    """)
+    st.write(
+        "Enter student details to predict alcohol consumption level."
+    )
 
     col1, col2 = st.columns(2)
 
@@ -361,11 +402,8 @@ elif page == "🤖 AI Prediction":
 
             try:
 
-                # CREATE 34 FEATURES INPUT
-
                 input_data = np.zeros((1, 34))
 
-                # Put important values in first positions
                 input_data[0][0] = age
                 input_data[0][1] = studytime
                 input_data[0][2] = failures
@@ -381,34 +419,48 @@ elif page == "🤖 AI Prediction":
                     f"Predicted Alcohol Level: {pred}"
                 )
 
-                # RISK ANALYSIS
+                fig = go.Figure(go.Indicator(
+                    mode="gauge+number",
+                    value=pred,
+                    title={'text': "Alcohol Risk Level"},
+                    gauge={
+                        'axis': {'range': [0, 10]},
+                        'steps': [
+                            {'range': [0, 4], 'color': "green"},
+                            {'range': [4, 7], 'color': "orange"},
+                            {'range': [7, 10], 'color': "red"}
+                        ]
+                    }
+                ))
+
+                st.plotly_chart(
+                    fig,
+                    use_container_width=True
+                )
 
                 if pred <= 4:
 
                     st.success("""
                     🟢 LOW RISK
-                    
-                    Student shows controlled alcohol consumption behavior.
+
+                    Student shows controlled alcohol behavior.
                     """)
 
                 elif pred <= 7:
 
                     st.warning("""
                     🟠 MEDIUM RISK
-                    
-                    Student may require monitoring and counseling.
+
+                    Student may require monitoring.
                     """)
 
                 else:
 
                     st.error("""
                     🔴 HIGH RISK
-                    
-                    High alcohol consumption detected.
-                    Academic performance may be affected.
-                    """)
 
-                # AI INSIGHTS
+                    High alcohol consumption detected.
+                    """)
 
                 st.markdown("---")
 
@@ -416,17 +468,51 @@ elif page == "🤖 AI Prediction":
 
                 if failures >= 3:
                     st.warning(
-                        "High failure count may correlate with poor academic habits."
+                        "High failure count detected."
                     )
 
                 if goout >= 4:
                     st.info(
-                        "Frequent social outings may increase alcohol exposure."
+                        "Frequent social outings detected."
                     )
 
                 if studytime <= 1:
                     st.error(
                         "Low study time detected."
+                    )
+
+                st.markdown("---")
+
+                st.subheader("🧠 AI Recommendations")
+
+                if pred > 7:
+
+                    st.error(
+                        "Reduce social outing frequency."
+                    )
+
+                    st.warning(
+                        "Increase study time."
+                    )
+
+                    st.info(
+                        "Academic counseling recommended."
+                    )
+
+                elif pred > 4:
+
+                    st.warning(
+                        "Maintain balanced lifestyle."
+                    )
+
+                    st.info(
+                        "Monitor academic performance."
+                    )
+
+                else:
+
+                    st.success(
+                        "Healthy academic behavior detected."
                     )
 
             except Exception as e:
@@ -435,17 +521,15 @@ elif page == "🤖 AI Prediction":
 
         else:
 
-            st.error("Model not loaded")
+            st.error("Model not loaded.")
 
 # ==========================================================
 # STATISTICS
 # ==========================================================
 
-elif page == "📉 Statistical Report":
+elif page == "📉 Statistics":
 
-    st.title("📉 Statistical Analysis Report")
-
-    st.subheader("Descriptive Statistics")
+    st.title("📉 Statistical Analysis")
 
     st.dataframe(
         df[
@@ -461,15 +545,13 @@ elif page == "📉 Statistical Report":
 
     st.markdown("---")
 
-    st.subheader("Pearson Correlation Test")
-
     corr, p = pearsonr(
         df["total_alcohol"],
         df["G3"]
     )
 
     st.metric(
-        "Correlation Value",
+        "Correlation",
         round(corr, 3)
     )
 
@@ -480,16 +562,15 @@ elif page == "📉 Statistical Report":
 
     if p < 0.05:
 
-        st.success("""
-        Significant relationship exists between
-        alcohol consumption and academic performance.
-        """)
+        st.success(
+            "Significant relationship exists."
+        )
 
     else:
 
-        st.warning("""
-        No statistically significant relationship found.
-        """)
+        st.warning(
+            "No statistically significant relationship found."
+        )
 
 # ==========================================================
 # FEATURE INSIGHTS
@@ -503,25 +584,14 @@ elif page == "📚 Feature Insights":
 
         importances = model.feature_importances_
 
-        numeric_df = df.select_dtypes(include=np.number)
-
-        features = numeric_df.drop(
-            columns=[
-                "Dalc",
-                "Walc",
-                "total_alcohol"
-            ],
-            errors="ignore"
-        ).columns
-
-        min_len = min(
-            len(importances),
-            len(features)
-        )
+        features = [
+            f"Feature {i+1}"
+            for i in range(len(importances))
+        ]
 
         imp_df = pd.DataFrame({
-            "Feature": features[:min_len],
-            "Importance": importances[:min_len]
+            "Feature": features,
+            "Importance": importances
         })
 
         imp_df = imp_df.sort_values(
@@ -552,7 +622,7 @@ elif page == "📚 Feature Insights":
 # DOWNLOAD
 # ==========================================================
 
-elif page == "📥 Download Dataset":
+elif page == "📥 Download":
 
     st.title("📥 Download Dataset")
 
@@ -572,10 +642,13 @@ elif page == "📥 Download Dataset":
 st.markdown("---")
 
 st.markdown("""
-<center>
+<div style='text-align:center;'>
 
-### 🎓 Developed By Pratham Taak  
-B.Tech CSE Final Year Major Project
+<h3>🎓 Developed By Pratham Taak</h3>
 
-</center>
+<h4>B.Tech Computer Science Engineering</h4>
+
+<h4>Final Year Major Project 2026</h4>
+
+</div>
 """, unsafe_allow_html=True)
