@@ -1,292 +1,538 @@
 # ==========================================================
-# ALCOHOL CONSUMPTION ANALYSIS SYSTEM (FINAL YEAR PROJECT)
+# AI-POWERED STUDENT ALCOHOL ANALYTICS SYSTEM
+# FINAL YEAR MAJOR PROJECT (PREMIUM UI VERSION)
 # ==========================================================
 
 import streamlit as st
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
+import plotly.express as px
+import plotly.graph_objects as go
 import pickle
 from scipy.stats import pearsonr
 
-# ----------------------------------------------------------
-# CONFIG
-# ----------------------------------------------------------
-st.set_page_config(page_title="Alcohol Analytics Pro", layout="wide")
+# ==========================================================
+# PAGE CONFIG
+# ==========================================================
 
-# ----------------------------------------------------------
+st.set_page_config(
+    page_title="AI Alcohol Analytics System",
+    page_icon="🍺",
+    layout="wide"
+)
+
+# ==========================================================
+# CUSTOM CSS (PREMIUM UI)
+# ==========================================================
+
+st.markdown("""
+<style>
+
+.main {
+    background-color: #0E1117;
+    color: white;
+}
+
+h1, h2, h3, h4 {
+    color: white !important;
+}
+
+.stMetric {
+    background: linear-gradient(135deg,#1f2937,#111827);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #374151;
+}
+
+div.stButton > button {
+    width: 100%;
+    background: linear-gradient(90deg,#2563eb,#7c3aed);
+    color: white;
+    border-radius: 10px;
+    height: 3em;
+    font-size: 18px;
+    border: none;
+}
+
+div.stButton > button:hover {
+    background: linear-gradient(90deg,#1d4ed8,#6d28d9);
+}
+
+.css-1d391kg {
+    background-color: #111827;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+# ==========================================================
 # LOAD DATA
-# ----------------------------------------------------------
+# ==========================================================
+
 df_mat = pd.read_csv("student-mat.csv")
 df_por = pd.read_csv("student-por.csv")
 
-df_mat["subject"] = "math"
-df_por["subject"] = "portuguese"
+df_mat["subject"] = "Math"
+df_por["subject"] = "Portuguese"
 
 df = pd.concat([df_mat, df_por], ignore_index=True)
 
+# Feature Engineering
 df["total_alcohol"] = df["Dalc"] + df["Walc"]
 df["grade_avg"] = (df["G1"] + df["G2"] + df["G3"]) / 3
 
-# ----------------------------------------------------------
+# ==========================================================
 # LOAD MODEL
-# ----------------------------------------------------------
+# ==========================================================
+
 model_loaded = False
+
 try:
     model = pickle.load(open("model.pkl", "rb"))
     model_loaded = True
 except:
     model_loaded = False
 
-# ----------------------------------------------------------
+# ==========================================================
 # SIDEBAR
-# ----------------------------------------------------------
-st.sidebar.title("⚙️ Navigation Panel")
+# ==========================================================
+
+st.sidebar.title("🎓 Navigation Panel")
 
 page = st.sidebar.radio(
-    "Go to",
+    "Select Page",
     [
-        "🏠 Overview",
-        "📊 Dashboard",
+        "🏠 Home",
+        "📊 Analytics Dashboard",
         "📈 Deep Analysis",
-        "📉 Statistics",
+        "🤖 AI Prediction",
+        "📉 Statistical Report",
         "📚 Feature Insights",
-        "🔮 Prediction",
-        "📥 Download"
+        "📥 Download Dataset"
     ]
 )
 
-# ----------------------------------------------------------
-# FILTER
-# ----------------------------------------------------------
-st.sidebar.subheader("Filter Data")
-subject_filter = st.sidebar.selectbox("Subject", ["All", "math", "portuguese"])
+st.sidebar.markdown("---")
+
+subject_filter = st.sidebar.selectbox(
+    "Filter Subject",
+    ["All", "Math", "Portuguese"]
+)
 
 if subject_filter != "All":
     df = df[df["subject"] == subject_filter]
 
-# ----------------------------------------------------------
-# OVERVIEW
-# ----------------------------------------------------------
-if page == "🏠 Overview":
-    st.title("🍺 Alcohol Consumption Analytics System")
+# ==========================================================
+# HOME PAGE
+# ==========================================================
 
-    st.write("""
-    This is an advanced data science project that includes:
-    - Data Analysis
-    - Statistical Testing
-    - Machine Learning
-    - Visualization Dashboard
+if page == "🏠 Home":
+
+    st.title("🍺 AI-Powered Student Alcohol Analytics System")
+
+    st.markdown("""
+    ### 🎯 Final Year Major Project
+    
+    This intelligent analytics system analyzes the relationship between:
+    
+    - Student alcohol consumption
+    - Academic performance
+    - Study behavior
+    - Failure trends
+    - Lifestyle patterns
+    
+    using:
+    
+    ✅ Machine Learning  
+    ✅ Statistical Analysis  
+    ✅ Data Visualization  
+    ✅ Predictive Analytics  
+    ✅ AI-Based Insights
     """)
 
-    st.subheader("Dataset Preview")
-    st.dataframe(df.head(20))
+    st.markdown("---")
 
-    st.subheader("Dataset Shape")
-    st.write(df.shape)
+    # METRICS
 
-# ----------------------------------------------------------
+    col1, col2, col3, col4 = st.columns(4)
+
+    col1.metric(
+        "Total Students",
+        len(df)
+    )
+
+    col2.metric(
+        "Average Alcohol",
+        round(df["total_alcohol"].mean(), 2)
+    )
+
+    col3.metric(
+        "Average Grade",
+        round(df["G3"].mean(), 2)
+    )
+
+    high_risk = len(df[df["total_alcohol"] >= 8])
+
+    col4.metric(
+        "High Risk Students",
+        high_risk
+    )
+
+    st.markdown("---")
+
+    st.subheader("📋 Dataset Preview")
+
+    st.dataframe(df.head(20), use_container_width=True)
+
+# ==========================================================
 # DASHBOARD
-# ----------------------------------------------------------
-elif page == "📊 Dashboard":
-    st.title("📊 Dashboard")
+# ==========================================================
 
-    col1, col2, col3 = st.columns(3)
+elif page == "📊 Analytics Dashboard":
 
-    col1.metric("Avg Alcohol", round(df["total_alcohol"].mean(), 2))
-    col2.metric("Avg Grade", round(df["G3"].mean(), 2))
-    col3.metric("Max Alcohol", df["total_alcohol"].max())
+    st.title("📊 Analytics Dashboard")
 
-    st.subheader("Alcohol Distribution")
-    fig1, ax1 = plt.subplots()
-    sns.histplot(df["total_alcohol"], kde=True, ax=ax1)
-    st.pyplot(fig1)
+    # CHART 1
 
-    st.subheader("Subject Comparison")
-    fig2, ax2 = plt.subplots()
-    sns.boxplot(x="subject", y="total_alcohol", data=df, ax=ax2)
-    st.pyplot(fig2)
+    st.subheader("Alcohol Consumption Distribution")
 
-    st.subheader("Alcohol vs Grades")
-    fig3, ax3 = plt.subplots()
-    sns.scatterplot(x="total_alcohol", y="G3", data=df, ax=ax3)
-    st.pyplot(fig3)
+    fig1 = px.histogram(
+        df,
+        x="total_alcohol",
+        nbins=20,
+        color_discrete_sequence=["#636EFA"]
+    )
 
-# ----------------------------------------------------------
+    st.plotly_chart(fig1, use_container_width=True)
+
+    # CHART 2
+
+    st.subheader("Alcohol vs Final Grade")
+
+    fig2 = px.scatter(
+        df,
+        x="total_alcohol",
+        y="G3",
+        color="subject",
+        size="studytime",
+        hover_data=["age"]
+    )
+
+    st.plotly_chart(fig2, use_container_width=True)
+
+    # CHART 3
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        st.subheader("Subject Wise Alcohol Usage")
+
+        fig3 = px.box(
+            df,
+            x="subject",
+            y="total_alcohol",
+            color="subject"
+        )
+
+        st.plotly_chart(fig3, use_container_width=True)
+
+    with col2:
+
+        st.subheader("Failures Distribution")
+
+        fig4 = px.pie(
+            df,
+            names="failures"
+        )
+
+        st.plotly_chart(fig4, use_container_width=True)
+
+# ==========================================================
 # DEEP ANALYSIS
-# ----------------------------------------------------------
+# ==========================================================
+
 elif page == "📈 Deep Analysis":
 
     st.title("📈 Deep Analysis")
 
-    # Select only numeric columns
-    numeric_df = df.select_dtypes(include=['number'])
+    numeric_df = df.select_dtypes(include=np.number)
 
-    # Correlation Heatmap
     st.subheader("Correlation Heatmap")
 
-    fig4, ax4 = plt.subplots(figsize=(10, 6))
+    corr = numeric_df.corr()
 
-    sns.heatmap(
-        numeric_df.corr(),
-        cmap="coolwarm",
-        annot=True,
-        fmt=".2f",
-        ax=ax4
+    fig = px.imshow(
+        corr,
+        text_auto=True,
+        color_continuous_scale="RdBu"
     )
 
-    st.pyplot(fig4)
+    st.plotly_chart(fig, use_container_width=True)
 
-    # Study Time vs Alcohol
-    st.subheader("Study Time vs Alcohol")
+    st.markdown("---")
 
-    fig5, ax5 = plt.subplots(figsize=(8, 5))
+    col1, col2 = st.columns(2)
 
-    sns.boxplot(
-        x="studytime",
-        y="total_alcohol",
-        data=df,
-        ax=ax5
-    )
+    with col1:
 
-    st.pyplot(fig5)
+        st.subheader("Study Time vs Alcohol")
 
-    # Failures vs Alcohol
-    st.subheader("Failures vs Alcohol")
+        fig5 = px.box(
+            df,
+            x="studytime",
+            y="total_alcohol",
+            color="studytime"
+        )
 
-    fig6, ax6 = plt.subplots(figsize=(8, 5))
+        st.plotly_chart(fig5, use_container_width=True)
 
-    sns.boxplot(
-        x="failures",
-        y="total_alcohol",
-        data=df,
-        ax=ax6
-    )
+    with col2:
 
-    st.pyplot(fig6)
+        st.subheader("Age vs Alcohol")
 
-    # Age vs Alcohol
-    st.subheader("Age vs Alcohol")
+        fig6 = px.scatter(
+            df,
+            x="age",
+            y="total_alcohol",
+            color="failures"
+        )
 
-    fig7, ax7 = plt.subplots(figsize=(8, 5))
+        st.plotly_chart(fig6, use_container_width=True)
 
-    sns.scatterplot(
-        x="age",
-        y="total_alcohol",
-        data=df,
-        ax=ax7
-    )
+# ==========================================================
+# AI PREDICTION
+# ==========================================================
 
-    st.pyplot(fig7)
+elif page == "🤖 AI Prediction":
 
-# ----------------------------------------------------------
+    st.title("🤖 AI Alcohol Consumption Prediction")
+
+    st.markdown("""
+    Enter student details to predict alcohol consumption level.
+    """)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+
+        age = st.slider("Age", 15, 22, 18)
+
+        studytime = st.slider(
+            "Study Time",
+            1,
+            4,
+            2
+        )
+
+    with col2:
+
+        failures = st.slider(
+            "Failures",
+            0,
+            4,
+            0
+        )
+
+        absences = st.slider(
+            "Absences",
+            0,
+            50,
+            5
+        )
+
+    if st.button("Predict Alcohol Consumption"):
+
+        if model_loaded:
+
+            try:
+
+                input_data = np.array([
+                    [age, studytime, failures]
+                ])
+
+                prediction = model.predict(input_data)
+
+                pred = round(prediction[0], 2)
+
+                st.success(
+                    f"Predicted Alcohol Level: {pred}"
+                )
+
+                # RISK ANALYSIS
+
+                if pred <= 4:
+
+                    st.success("""
+                    🟢 LOW RISK
+                    
+                    Student shows controlled alcohol consumption behavior.
+                    """)
+
+                elif pred <= 7:
+
+                    st.warning("""
+                    🟠 MEDIUM RISK
+                    
+                    Student may require monitoring and counseling.
+                    """)
+
+                else:
+
+                    st.error("""
+                    🔴 HIGH RISK
+                    
+                    High alcohol consumption detected.
+                    Academic performance may be affected.
+                    """)
+
+            except Exception as e:
+
+                st.error(f"Prediction Error: {e}")
+
+        else:
+
+            st.error("Model not loaded")
+
+# ==========================================================
 # STATISTICS
-# ----------------------------------------------------------
-elif page == "📉 Statistics":
-    st.title("📉 Statistical Analysis")
+# ==========================================================
+
+elif page == "📉 Statistical Report":
+
+    st.title("📉 Statistical Analysis Report")
 
     st.subheader("Descriptive Statistics")
-    st.write(df[["total_alcohol", "G3"]].describe())
 
-    st.subheader("Correlation Test")
-    corr, p = pearsonr(df["total_alcohol"], df["G3"])
+    st.dataframe(
+        df[
+            [
+                "total_alcohol",
+                "G3",
+                "studytime",
+                "failures"
+            ]
+        ].describe(),
+        use_container_width=True
+    )
 
-    st.write("Correlation:", round(corr, 3))
-    st.write("P-value:", p)
+    st.markdown("---")
+
+    st.subheader("Pearson Correlation Test")
+
+    corr, p = pearsonr(
+        df["total_alcohol"],
+        df["G3"]
+    )
+
+    st.metric(
+        "Correlation Value",
+        round(corr, 3)
+    )
+
+    st.metric(
+        "P-Value",
+        round(p, 5)
+    )
 
     if p < 0.05:
-        st.success("Significant relationship exists")
-    else:
-        st.warning("No significant relationship")
 
-# ----------------------------------------------------------
+        st.success("""
+        Significant relationship exists between
+        alcohol consumption and academic performance.
+        """)
+
+    else:
+
+        st.warning("""
+        No statistically significant relationship found.
+        """)
+
+# ==========================================================
 # FEATURE INSIGHTS
-# ----------------------------------------------------------
+# ==========================================================
+
 elif page == "📚 Feature Insights":
 
-    st.title("📚 Feature Insights")
-
-    st.subheader("Top Influencing Features")
+    st.title("📚 Machine Learning Feature Insights")
 
     if model_loaded and hasattr(model, "feature_importances_"):
 
-        try:
-            # Get feature importances
-            importances = model.feature_importances_
+        importances = model.feature_importances_
 
-            # Select only numeric columns
-            numeric_df = df.select_dtypes(include=['number'])
+        numeric_df = df.select_dtypes(include=np.number)
 
-            # Remove target columns safely
-            features = numeric_df.drop(
-                columns=["Dalc", "Walc", "total_alcohol"],
-                errors="ignore"
-            ).columns
+        features = numeric_df.drop(
+            columns=[
+                "Dalc",
+                "Walc",
+                "total_alcohol"
+            ],
+            errors="ignore"
+        ).columns
 
-            # Match lengths to avoid ValueError
-            min_len = min(len(importances), len(features))
+        min_len = min(
+            len(importances),
+            len(features)
+        )
 
-            imp_df = pd.Series(
-                importances[:min_len],
-                index=features[:min_len]
-            )
+        imp_df = pd.DataFrame({
+            "Feature": features[:min_len],
+            "Importance": importances[:min_len]
+        })
 
-            # Sort top 10
-            imp_df = imp_df.sort_values(
-                ascending=False
-            ).head(10)
+        imp_df = imp_df.sort_values(
+            by="Importance",
+            ascending=False
+        )
 
-            # Plot
-            fig8, ax8 = plt.subplots(figsize=(10, 6))
+        fig = px.bar(
+            imp_df.head(10),
+            x="Importance",
+            y="Feature",
+            orientation="h",
+            color="Importance"
+        )
 
-            imp_df.plot(
-                kind="barh",
-                ax=ax8
-            )
-
-            ax8.invert_yaxis()
-
-            st.pyplot(fig8)
-
-        except Exception as e:
-            st.error(f"Error generating feature importance: {e}")
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
 
     else:
-        st.info("Feature importance not available")
 
-# ----------------------------------------------------------
-# PREDICTION
-# ----------------------------------------------------------
-elif page == "🔮 Prediction":
-    st.title("🔮 Alcohol Prediction")
+        st.warning(
+            "Feature importance not available."
+        )
 
-    age = st.slider("Age", 15, 22)
-    studytime = st.slider("Study Time", 1, 4)
-    failures = st.slider("Failures", 0, 3)
-
-    if st.button("Predict"):
-        if model_loaded:
-            try:
-                input_data = np.array([[age, studytime, failures]])
-                pred = model.predict(input_data)
-                st.success(f"Predicted Alcohol Level: {pred[0]:.2f}")
-            except:
-                st.warning("Model trained on more features")
-        else:
-            st.error("Model not loaded")
-
-# ----------------------------------------------------------
+# ==========================================================
 # DOWNLOAD
-# ----------------------------------------------------------
-elif page == "📥 Download":
-    st.title("📥 Download Data")
+# ==========================================================
+
+elif page == "📥 Download Dataset":
+
+    st.title("📥 Download Dataset")
 
     csv = df.to_csv(index=False).encode("utf-8")
 
     st.download_button(
-        "Download Dataset",
-        csv,
-        "alcohol_data.csv",
-        "text/csv"
+        label="⬇ Download CSV File",
+        data=csv,
+        file_name="alcohol_analytics_dataset.csv",
+        mime="text/csv"
     )
+
+# ==========================================================
+# FOOTER
+# ==========================================================
+
+st.markdown("---")
+
+st.markdown("""
+<center>
+
+### 🎓 Developed By Pratham Taak  
+B.Tech CSE Final Year Major Project
+
+</center>
+""", unsafe_allow_html=True)
